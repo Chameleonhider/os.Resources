@@ -213,14 +213,14 @@ namespace spades {
 		{
 			if (scopeZoom != 0 && scopeZoom != -1 && AimDownSightState > 0.5f)
 			{
-				if (swing.x > 0.025f)
-					swing.x = 0.025f;
-				if (swing.z > 0.025f)
-					swing.z = 0.025f;
-				if (swing.x < -0.025f)
-					swing.x = -0.025f;
-				if (swing.z < -0.025f)
-					swing.z = -0.025f;
+				if (swing.x > 0.02f)
+					swing.x = 0.02f;
+				if (swing.z > 0.02f)
+					swing.z = 0.02f;
+				if (swing.x < -0.02f)
+					swing.x = -0.02f;
+				if (swing.z < -0.02f)
+					swing.z = -0.02f;
 			}
 		
 			Matrix4 mat;
@@ -243,6 +243,29 @@ namespace spades {
 					putdown * 0.2f) * mat;
 				mat = CreateTranslateMatrix(Vector3(0.1f, -0.3f, 0.1f)
 					* putdown)  * mat;
+			}
+			
+			if(reloading) 
+			{
+				if (reloadProgress < 0.15f)
+				{
+					float per = reloadProgress/0.15f;
+					per *= per;
+					mat = CreateTranslateMatrix(0.f, 0.f, per) * mat;		
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per) * mat;					
+				}
+				else if (reloadProgress < 0.75f)
+				{
+					mat = CreateTranslateMatrix(0.f, 0.f, 1.f) * mat;		
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), 1.f) * mat;
+				}
+				else if (reloadProgress < 1.f)
+				{
+					float per = (0.75f-reloadProgress)/0.25f;
+					per *= per * -1;
+					mat = CreateTranslateMatrix(0.f, 0.f, per+1.f) * mat;		
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per+1.f) * mat;		
+				}
 			}
 			
 			Vector3 trans(0.f, 0.f, 0.f);
