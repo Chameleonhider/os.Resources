@@ -65,7 +65,7 @@ namespace spades
 			@reloadEmptySound = dev.RegisterSound
 				("Sounds/Weapons/RifleB/ReloadEmpty.wav");
 				
-			@scopeImage1 = renderer.RegisterImage("Gfx/Weapons/CrosshairA.png");
+			@scopeImage1 = renderer.RegisterImage("Gfx/Weapons/CrosshairB.png");
 			@scopeImage2 = renderer.RegisterImage("Gfx/Weapons/ScopeBlur.png");
 		}
 		
