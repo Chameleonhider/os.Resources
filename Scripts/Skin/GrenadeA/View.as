@@ -21,6 +21,8 @@
  namespace spades {
 	class ViewGrenadeSkinA: 
 	IToolSkin, IViewToolSkin, IGrenadeSkin {
+		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
+	
 		private float sprintState;
 		private float raiseState;
 		private IntVector3 teamColor;
@@ -181,14 +183,17 @@
 			leftHand = Vector3(0.f, 0.f, 0.f);
 			rightHand = Vector3(0.f, 0.f, 0.f);
 			
+			float xhSize = 0.05f;
+			if (opengl)
+				xhSize *= 4;
+			
 			// draw xhair
-			float reflexOpacity = 1.f;
 			Vector3 reflexPos = eyeMatrix * Vector3(0.f, 0.2f, 0.f);
-			renderer.Color = Vector4(1.f, 1.f, 1.f, readyState); // premultiplied alpha
+			renderer.Color = Vector4(1.f, 1.f, 1.f, 1.f); // premultiplied alpha
 			if (cookTime < 0.01f)
-				renderer.AddSprite(sightImage1, reflexPos, 0.05f, 0.f);
+				renderer.AddSprite(sightImage1, reflexPos, xhSize, 0.f);
 			else
-				renderer.AddSprite(sightImage2, reflexPos, 0.05f, 0.f);
+				renderer.AddSprite(sightImage2, reflexPos, xhSize, 0.f);
 		}
 		void Draw2D() {
 			// renderer.ColorNP = (Vector4(1.f, 1.f, 1.f, 1.f));

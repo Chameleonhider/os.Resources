@@ -158,6 +158,8 @@ namespace spades
 			//Chameleon: scope
 			if (ScopeZoom != 0 && ScopeZoom != -1 && AimDownSightState > 0.5f)
 			{
+				renderer.Color = Vector4(1.f, 1.f, 1.f, 1.f);
+			
 				if (!opengl)
 				{
 					Matrix4 mat2 = GetViewWeaponMatrix() * CreateScaleMatrix(0.015625f);		

@@ -114,7 +114,12 @@ namespace spades
 		void AddToScene() 
 		{
 			//BasicViewWeapon::DrawXH();
-			float move = 0;			
+			float move = 0;		
+			if (readyState < 0.2f)
+				move = 1;
+			else if (readyState < 1.f)
+				move = 1 - (readyState-0.2f)/0.8f;	
+				
 			Matrix4 mat = CreateScaleMatrix(0.015625f);
 			mat = GetViewWeaponMatrix() * mat;
 			
@@ -144,7 +149,7 @@ namespace spades
 			param.matrix = weapMatrix;
 			
 			renderer.AddModel(gunModel, param);
-			param.matrix *=	CreateTranslateMatrix(0.f, 43.75f+move, 0.25f);
+			param.matrix *=	CreateTranslateMatrix(0.f, 43.75f-8*move, 0.25f);
 			param.matrix *= CreateScaleMatrix(0.5f);
 			renderer.AddModel(moveModel, param);
 			
@@ -159,43 +164,8 @@ namespace spades
 			param.matrix *= CreateScaleMatrix(0.5f);
 			renderer.AddModel(sightModelF, param); // front
 			
-			// magazine/reload action
-			mat *= CreateTranslateMatrix(0.f, 3.f, 1.f);
-			reload *= 2.5f;
-			if(reloading) {
-				if(reload < 0.7f){
-					// magazine release
-					float per = reload / 0.7f;
-					mat *= CreateTranslateMatrix(0.f, 0.f, per*per*50.f);
-					leftHand = Mix(leftHand, leftHand2, SmoothStep(per));
-				}else if(reload < 1.4f) {
-					// insert magazine
-					float per = (1.4f - reload) / 0.7f;
-					if(per < 0.3f) {
-						// non-smooth insertion
-						per *= 4.f; per -= 0.4f;
-						per = Clamp(per, 0.0f, 0.3f);
-					}
-					
-					mat *= CreateTranslateMatrix(0.f, 0.f, per*per*10.f);
-					leftHand = mat * Vector3(0.f, 0.f, 4.f);
-				}else if(reload < 1.9f){
-					// move the left hand to the original position
-					// and start doing something with the right hand
-					float per = (reload - 1.4f) / 0.5f;
-					leftHand = mat * Vector3(0.f, 0.f, 4.f);
-					leftHand = Mix(leftHand, leftHand3, SmoothStep(per));
-				}else if(reload < 2.2f){
-					float per = (reload - 1.9f) / 0.3f;
-					leftHand = Mix(leftHand3, leftHand4, SmoothStep(per));
-				}else{
-					float per = (reload - 2.2f) / 0.3f;
-					leftHand = Mix(leftHand4, leftHand, SmoothStep(per));
-				}
-			}
-			
-			param.matrix = eyeMatrix * mat;
-			//renderer.AddModel(magModel, param);
+			param.matrix = weapMatrix;
+			renderer.AddModel(magModel, param);
 			
 			leftHand = Vector3(0.f, 0.f, 0.f);
 			rightHand = Vector3(0.f, 0.f, 0.f);
