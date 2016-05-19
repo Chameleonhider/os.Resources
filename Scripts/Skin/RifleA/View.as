@@ -25,7 +25,6 @@ namespace spades
 	BasicViewWeapon
 	{
 		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
-		private int snd_maxDistance = ConfigItem("snd_maxDistance", "150").IntValue;
 		private AudioDevice@ audioDevice;
 		
 		private Model@ gunModel;
@@ -196,6 +195,9 @@ namespace spades
 				move = readyState/0.15f;
 			else if (readyState < 0.65f)
 				move = 1 - (readyState-0.15f)/0.5f;
+			
+			if (readyState < 0.1f)
+				BasicViewWeapon::DrawFlash(weapMatrix * Vector3(0, 110, 2));
 			
 			// draw solid scope
 			param.matrix = weapMatrix;

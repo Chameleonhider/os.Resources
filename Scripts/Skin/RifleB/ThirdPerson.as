@@ -102,6 +102,8 @@
 		private AudioChunk@ reloadFullSound;
 		private AudioChunk@ reloadEmptySound;
 		
+		private Image@ flashImage;
+		
 		ThirdPersonRifleSkinB(Renderer@ r, AudioDevice@ dev) {
 			@renderer = r;
 			@audioDevice = dev;
@@ -120,6 +122,8 @@
 				("Sounds/Weapons/RifleB/ReloadFull.wav");
 			@reloadEmptySound = dev.RegisterSound
 				("Sounds/Weapons/RifleB/ReloadEmpty.wav");
+				
+			@flashImage = renderer.RegisterImage("Gfx/WhiteSmoke.tga");
 		}
 		
 		void Update(float dt) {
@@ -186,6 +190,12 @@
 			ModelRenderParam param;
 			param.matrix = originMatrix * mat;
 			renderer.AddModel(model, param);
+			
+			if (readyState < 0.1f)
+			{
+				renderer.Color = Vector4(1.f, 1.f, 1.f, 0.5f); // premultiplied alpha
+				renderer.AddSprite(flashImage, param.matrix*Vector3(0, 5, 0), 0.4f+readyState/2, 0);
+			}
 		}
 	}
 	

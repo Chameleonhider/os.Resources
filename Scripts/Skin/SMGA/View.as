@@ -24,8 +24,6 @@ namespace spades
 	IToolSkin, IViewToolSkin, IWeaponSkin,
 	BasicViewWeapon
 	{
-		private int snd_maxDistance = ConfigItem("snd_maxDistance", "150").IntValue;
-		
 		private AudioDevice@ audioDevice;
 		private Model@ gunModel;
 		private Model@ moveModel;
@@ -136,11 +134,15 @@ namespace spades
 			{
 				//mat = AdjustToAlignSight(mat, Vector3(0.f, debug_b.FloatValue, debug_c.FloatValue), (AimDownSightStateSmooth - 0.5f) / 0.5f);
 				mat = AdjustToAlignSight(mat, Vector3(0.f, 50.f, -1.472f), (AimDownSightStateSmooth));
+				
 			}
 			
 			ModelRenderParam param;
 			Matrix4 weapMatrix = eyeMatrix * mat;
 			//weapMatrix *= CreateTranslateMatrix(debug_a, debug_b, debug_c);
+			
+			if (readyState < 0.3f)
+				BasicViewWeapon::DrawFlash(weapMatrix * Vector3(0, 90, 4));
 			
 			// draw weapon
 			param.matrix = weapMatrix;			

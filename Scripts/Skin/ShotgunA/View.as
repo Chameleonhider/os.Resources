@@ -22,9 +22,7 @@
 	class ViewShotgunSkinA: 
 	IToolSkin, IViewToolSkin, IWeaponSkin,
 	BasicViewWeapon
-	{
-		private int snd_maxDistance = ConfigItem("snd_maxDistance", "150").IntValue;
-		
+	{		
 		private AudioDevice@ audioDevice;
 		private Model@ gunModel;
 		private Model@ gunModel2;
@@ -144,6 +142,10 @@
 			
 			ModelRenderParam param;
 			Matrix4 weapMatrix = eyeMatrix * mat;
+			
+			if (readyState < 0.07f)
+				BasicViewWeapon::DrawFlash(weapMatrix * Vector3(0, 100, 2));
+				
 			param.matrix = weapMatrix;
 			renderer.AddModel(gunModel, param);
 			renderer.AddModel(gunModel2, param);

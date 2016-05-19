@@ -22,8 +22,9 @@ namespace spades {
 	class BasicViewWeapon: 
 	IToolSkin, IViewToolSkin, IWeaponSkin {
 		
-		private ConfigItem cfg("v_defaultFireVibration", "0");
-		private int defFireVib = cfg.IntValue;
+		private int snd_maxDistance = ConfigItem("snd_maxDistance", "150").IntValue;
+		private int defFireVib = ConfigItem("v_defaultFireVibration", "0").IntValue;
+		private bool opt_muzzleFlash = ConfigItem("opt_muzzleFlash", "1").IntValue != 0;
 		
 		// IToolSkin
 		private float sprintState;
@@ -168,21 +169,20 @@ namespace spades {
 		
 		private Renderer@ renderer;
 		private Image@ sightImage;
-		private Image@ sightImage1;
+		private Image@ flashImage;
 		
 		BasicViewWeapon(Renderer@ renderer)
 		{
 			@this.renderer = renderer;
 			localFireVibration = 0.f;
 			@sightImage = renderer.RegisterImage("Gfx/Sight.tga");
-			//@sightImage1 = renderer.RegisterImage("Gfx/Sight.png");
-			//@sightImage1 = renderer.RegisterImage("Gfx/Weapons/CrosshairA.png");
+			@flashImage = renderer.RegisterImage("Gfx/WhiteSmoke32.tga");
 		}
 		
 		float GetLocalFireVibration() 
 		{
-			if (defFireVib == 0) return 0;
-			return localFireVibration; 
+			if (defFireVib == 0) return localFireVibration/2;
+				return localFireVibration; 
 		}
 		
 		float GetMotionGain() 
@@ -197,7 +197,7 @@ namespace spades {
 		
 		Vector3 GetLocalFireVibrationOffset()
 		{
-			if (defFireVib == 0) return Vector3(0,0,0);
+			if (defFireVib == 0) return Vector3(0,-0.1f,0)*GetLocalFireVibration();
 			
 			float vib = GetLocalFireVibration();
 			float motion = GetMotionGain();
@@ -221,6 +221,10 @@ namespace spades {
 					swing.x = -0.01f;
 				if (swing.z < -0.01f)
 					swing.z = -0.01f;
+			}
+			else if (AimDownSightState > 0.5f)
+			{
+				swing.x *= -1;
 			}
 		
 			Matrix4 mat;
@@ -277,12 +281,9 @@ namespace spades {
 			trans += GetLocalFireVibrationOffset();
 			mat = CreateTranslateMatrix(trans) * mat;
 			
-			mat *= CreateTranslateMatrix(Vector3(0.f, -0.25f, 0.f));
-			
+			mat = CreateTranslateMatrix(Vector3(0.f, -0.3f*(1-sprintState), 0.f)) * mat;			
 			if (AimDownSightStateSmooth > 0.f)
-			{
-				mat *= CreateTranslateMatrix(Vector3(0.f, -0.25f*AimDownSightStateSmooth, 0.f));
-			}
+				mat = CreateTranslateMatrix(Vector3(0.f, -0.3f*AimDownSightStateSmooth, 0.f)) * mat;
 			
 			return mat;
 		}
@@ -291,7 +292,7 @@ namespace spades {
 		{
 			if (localFireVibration > 0)
 			{
-				localFireVibration -= dt * 10.f;
+				localFireVibration -= dt * 5.f;
 				if(localFireVibration < 0.f) localFireVibration = 0.f;
 			}
 		}
@@ -323,17 +324,19 @@ namespace spades {
 				Vector2((renderer.ScreenWidth - sightImage.Width) * 0.5f,
 						(renderer.ScreenHeight - sightImage.Height) * 0.5f));
 		}
+		void DrawFlash(Vector3 vec3) 
+		{		
+			if (opt_muzzleFlash)
+			{
+				renderer.Color = Vector4(1.f, 1.f, 1.f, 0.75f-readyState); // premultiplied alpha
+				renderer.AddSprite(flashImage, vec3, 0.4f+readyState/2, GetRandom());
+			}
+		}
 		void DrawXH() 
-		{
-			// draw xhair
-			// Vector3 reflexPos = eyeMatrix * Vector3(0.f, 0.1f, 0.f);
-			// renderer.Color = Vector4(1.f, 1.f, 1.f, readyState); // premultiplied alpha
-			// renderer.AddSprite(sightImage1, reflexPos, 0.01f, 0.f);
-			
-			// draw xhair
-			Vector3 reflexPos = eyeMatrix * CreateTranslateMatrix(0.f, 10.f, 0.f) * Vector3(0.f, 1.f, 0.f);
+		{			
+			Vector3 xhPos = eyeMatrix * CreateTranslateMatrix(0.f, 10.f, 0.f) * Vector3(0.f, 1.f, 0.f);
 			renderer.Color = Vector4(1.f, 1.f, 1.f, readyState); // premultiplied alpha
-			renderer.AddSprite(sightImage1, reflexPos, 1.f, 0.f);
+			renderer.AddSprite(sightImage, xhPos, 1.f, 0.f);
 		}
 	}
 	
