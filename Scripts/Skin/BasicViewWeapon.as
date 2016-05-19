@@ -176,7 +176,7 @@ namespace spades {
 			localFireVibration = 0.f;
 			@sightImage = renderer.RegisterImage("Gfx/Sight.tga");
 			//@sightImage1 = renderer.RegisterImage("Gfx/Sight.png");
-			@sightImage1 = renderer.RegisterImage("Gfx/Weapons/CrosshairA.png");
+			//@sightImage1 = renderer.RegisterImage("Gfx/Weapons/CrosshairA.png");
 		}
 		
 		float GetLocalFireVibration() 
@@ -213,14 +213,14 @@ namespace spades {
 		{
 			if (scopeZoom != 0 && scopeZoom != -1 && AimDownSightState > 0.5f)
 			{
-				if (swing.x > 0.02f)
-					swing.x = 0.02f;
-				if (swing.z > 0.02f)
-					swing.z = 0.02f;
-				if (swing.x < -0.02f)
-					swing.x = -0.02f;
-				if (swing.z < -0.02f)
-					swing.z = -0.02f;
+				if (swing.x > 0.01f)
+					swing.x = 0.01f;
+				if (swing.z > 0.01f)
+					swing.z = 0.01f;
+				if (swing.x < -0.01f)
+					swing.x = -0.01f;
+				if (swing.z < -0.01f)
+					swing.z = -0.01f;
 			}
 		
 			Matrix4 mat;
@@ -319,7 +319,7 @@ namespace spades {
 		void Draw2D() 
 		{
 			renderer.ColorNP = (Vector4(1.f, 1.f, 1.f, 0.5f));
-			renderer.DrawImage(sightImage1,
+			renderer.DrawImage(sightImage,
 				Vector2((renderer.ScreenWidth - sightImage.Width) * 0.5f,
 						(renderer.ScreenHeight - sightImage.Height) * 0.5f));
 		}

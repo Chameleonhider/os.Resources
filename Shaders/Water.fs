@@ -54,7 +54,7 @@ float depthAt(vec2 pt){
 void main() {
 
 	//DayNight
-	vec3 DayNight = (fogColor.x+fogColor.y+fogColor.z+0.5)/3.4;
+	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
 	
 	vec3 worldPositionFromOrigin = worldPosition - viewOrigin;
 	vec4 waveCoord = worldPosition.xyxy * vec4(vec2(0.08), vec2(0.15704))

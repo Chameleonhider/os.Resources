@@ -39,7 +39,7 @@ void main() {
 	fogColorPremuld *= gl_FragColor.w;
 	
 	//DayNight
-	vec3 DayNight = (fogColor.x+fogColor.y+fogColor.z+6.0)/9.0;
+	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+6.0)/9.0);
 	gl_FragColor.xyz *= DayNight;
 	
 	gl_FragColor = mix(gl_FragColor, fogColorPremuld, fogDensity);

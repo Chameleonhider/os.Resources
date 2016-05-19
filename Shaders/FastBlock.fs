@@ -34,7 +34,7 @@ vec3 EvaluateAmbientLight(float detailAmbientOcclusion);
 void main() {
 
 	//DayNight
-	vec3 DayNight = (fogColor.x+fogColor.y+fogColor.z+0.5)/3.4;
+	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
 	
 	// color is linear
 	
