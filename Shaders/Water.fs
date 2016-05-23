@@ -52,9 +52,6 @@ float depthAt(vec2 pt){
 }
 
 void main() {
-
-	//DayNight
-	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
 	
 	vec3 worldPositionFromOrigin = worldPosition - viewOrigin;
 	vec4 waveCoord = worldPosition.xyxy * vec4(vec2(0.08), vec2(0.15704))
@@ -135,7 +132,10 @@ void main() {
 	gl_FragColor.xyz *= gl_FragColor.xyz; // screen color to linear
 #endif
 
-	gl_FragColor.xyz *= DayNight;
+	//DayNight
+	float dNight = (fogColor.x+fogColor.y+fogColor.z+0.5)/3.4;
+	vec3 DayNight = vec3(dNight);
+	gl_FragColor.xyz = mix(gl_FragColor.xyz, DayNight, 1.);
 	
 	// apply fog color to water color now.
 	// note that fog is already applied to underwater object.
@@ -190,7 +190,7 @@ void main() {
 		spec *= reflective;
 		gl_FragColor.xyz += sunlight * spec * 1000. * att;
 		
-		vec3 DayNight = (fogColor.x+fogColor.y+fogColor.z+0.001)/3.001;
+		vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.01)/3.01);
 		gl_FragColor.xyz *= DayNight;
 	}
 	

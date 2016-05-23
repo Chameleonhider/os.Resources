@@ -194,10 +194,10 @@
 			param.matrix = originMatrix * mat;
 			renderer.AddModel(model, param);
 			
-			if (readyState < 0.07f)
+			if (readyState < 0.3f)
 			{
 				renderer.Color = Vector4(1.f, 1.f, 1.f, 0.5f); // premultiplied alpha
-				renderer.AddSprite(flashImage, param.matrix*Vector3(0, 5, 0), 0.4f+readyState/2, 0);
+				renderer.AddSprite(flashImage, param.matrix*Vector3(0, 45, 0), 0.4f+readyState/2, 0);
 			}
 		}
 	}

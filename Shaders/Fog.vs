@@ -19,8 +19,8 @@
  */
 
 vec4 FogDensity(float poweredLength) {
-	float distance = floor(poweredLength/64)*64;
-	distance = min(distance * (1. / 128 / 128), 1);
+	float distance = floor(poweredLength/64.)*64.;
+	distance = min(distance * (1. / 128. / 128.), 1.);
 	float weakenedDensity = 1. - distance;
 	distance *= distance;
 	return mix(vec4(distance, distance, distance, 0), vec4(1. - weakenedDensity),

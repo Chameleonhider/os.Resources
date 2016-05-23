@@ -1,9 +1,11 @@
 2016.05.14 NoLeafClover release
 
+TO read this, disable WordWrap. Best use Notepad++
+
 To access settings in-game, press "Global say <T>" or "</>" keys. 
 Then write down the name of the setting you want to change.
 A list of available settings should pop up unless you make a typo.
-
+|	----		----	|	----		----	|	----	----	----
 |						|						|
 Settings:
 |Name:					|Possible values/range: |Explanation:
@@ -26,6 +28,7 @@ View/HUD settings:
 |v_drawArms				|0,1,2					|Enables 1st person Arms. 0-disable, 1-enable
 |v_drawTorso			|0,1,2					|Enables 1st person Torso. 0-disable, 1-enable, 2-move away when looking down
 |v_drawLegs				|0,1,2					|Enables 1st person Legs. 0-disable, 1-enable, 2-move away when looking down
+|v_binocsZoom			|-1,0,1-99				|Binoculars zoom. To use binoculars, equip grenades and press RightMouse. 0-disable, 1,2,3...- binocular zoom, -1 - extra feature 
 |						|						|
 |hud_playerDlines		|0,1,2					|Display teammate highlight. 0-disable, 1-enable precise, 2-enable all
 |hud_playerNames		|0,1,2					|Display teammate names. 0-disable, 1-show distance, 2-show only name

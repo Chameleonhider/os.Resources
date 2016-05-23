@@ -29,9 +29,6 @@ varying vec4 fogDensity;
 
 void main() {
 
-	//DayNight
-	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
-	
 	gl_FragColor = texture2D(texture, texCoord);
 #if LINEAR_FRAMEBUFFER
 	gl_FragColor.xyz *= gl_FragColor.xyz;
@@ -39,7 +36,12 @@ void main() {
 	gl_FragColor.xyz *= gl_FragColor.w; // premultiplied alpha
 	gl_FragColor *= color;
 	
-	gl_FragColor.xyz *= DayNight;
+	//DayNight
+	if (gl_FragColor.x < 1. && gl_FragColor.y < 1. && gl_FragColor.z < 1.)
+	{
+		vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
+		gl_FragColor.xyz *= DayNight;		
+	}
 	
 	vec4 fogColorPremuld = vec4(fogColor, 1.);
 	fogColorPremuld *= gl_FragColor.w;

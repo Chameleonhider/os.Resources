@@ -222,7 +222,7 @@ namespace spades {
 				if (swing.z < -0.01f)
 					swing.z = -0.01f;
 			}
-			else if (AimDownSightState > 0.5f)
+			else if (AimDownSightState > 0.f)
 			{
 				swing.x *= -1;
 			}

@@ -39,11 +39,7 @@ float depthAt(vec2 pt){
 	return decodeDepth(w, zNearFar.x, zNearFar.y);
 }
 
-void main() {
-	
-	//DayNight
-	vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
-	
+void main() {	
 	// get depth
 	float depth = depthAt(texCoord.zw);
 	
@@ -58,7 +54,12 @@ void main() {
 	gl_FragColor.xyz *= gl_FragColor.w; // premultiplied alpha
 	gl_FragColor *= color;
 
-	gl_FragColor.xyz *= DayNight;
+	//DayNight
+	if (gl_FragColor.x < 1 && gl_FragColor.y < 1 && gl_FragColor.z < 1)
+	{
+		vec3 DayNight = vec3((fogColor.x+fogColor.y+fogColor.z+0.5)/3.4);
+		gl_FragColor.xyz *= DayNight;		
+	}
 	
 	vec3 fogColorPremuld = fogColor;
 	fogColorPremuld *= gl_FragColor.w;

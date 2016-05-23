@@ -194,7 +194,7 @@
 			if (readyState < 0.1f)
 			{
 				renderer.Color = Vector4(1.f, 1.f, 1.f, 0.5f); // premultiplied alpha
-				renderer.AddSprite(flashImage, param.matrix*Vector3(0, 5, 0), 0.4f+readyState/2, 0);
+				renderer.AddSprite(flashImage, param.matrix*Vector3(0, 60, 0), 0.4f+readyState/2, 0);
 			}
 		}
 	}

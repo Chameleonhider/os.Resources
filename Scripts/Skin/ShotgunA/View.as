@@ -137,7 +137,7 @@
 			if(AimDownSightStateSmooth > 0.f)
 			{
 				//mat = AdjustToAlignSight(mat, Vector3(0.f, 8.5f, -4.4f), AimDownSightStateSmooth);
-				mat = AdjustToAlignSight(mat, Vector3(0.f, 60.f, -1.472f), (AimDownSightStateSmooth));
+				mat = AdjustToAlignSight(mat, Vector3(0.f, -60.f, -1.472f), (AimDownSightStateSmooth));
 			}
 			
 			ModelRenderParam param;
