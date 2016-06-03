@@ -1,2 +1,2 @@
-Shaders/PostFilters/GammaMix.fs
-Shaders/PostFilters/GammaMix.vs
+Shaders/Postfilters/GammaMix.fs
+Shaders/Postfilters/GammaMix.vs

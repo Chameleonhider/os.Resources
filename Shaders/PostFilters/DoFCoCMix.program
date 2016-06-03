@@ -1,2 +1,2 @@
-Shaders/PostFilters/DoFCoCMix.fs
-Shaders/PostFilters/DoFCoCMix.vs
+Shaders/Postfilters/DoFCoCMix.fs
+Shaders/Postfilters/DoFCoCMix.vs

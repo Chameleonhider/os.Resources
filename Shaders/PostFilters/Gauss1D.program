@@ -1,2 +1,2 @@
-Shaders/PostFilters/Gauss1D.fs
-Shaders/PostFilters/Gauss1D.vs
+Shaders/Postfilters/Gauss1D.fs
+Shaders/Postfilters/Gauss1D.vs

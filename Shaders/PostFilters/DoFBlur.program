@@ -1,2 +1,2 @@
-Shaders/PostFilters/DoFBlur.fs
-Shaders/PostFilters/DoFBlur.vs
+Shaders/Postfilters/DoFBlur.fs
+Shaders/Postfilters/DoFBlur.vs

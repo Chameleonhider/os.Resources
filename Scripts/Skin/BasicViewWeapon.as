@@ -25,6 +25,7 @@ namespace spades {
 		private int snd_maxDistance = ConfigItem("snd_maxDistance", "150").IntValue;
 		private int defFireVib = ConfigItem("v_defaultFireVibration", "0").IntValue;
 		private bool opt_muzzleFlash = ConfigItem("opt_muzzleFlash", "1").IntValue != 0;
+		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
 		
 		// IToolSkin
 		private float sprintState;
@@ -170,6 +171,7 @@ namespace spades {
 		private Renderer@ renderer;
 		private Image@ sightImage;
 		private Image@ flashImage;
+		private bool bHideWeap;
 		
 		BasicViewWeapon(Renderer@ renderer)
 		{
@@ -177,6 +179,7 @@ namespace spades {
 			localFireVibration = 0.f;
 			@sightImage = renderer.RegisterImage("Gfx/Sight.tga");
 			@flashImage = renderer.RegisterImage("Gfx/WhiteSmoke32.tga");
+			bHideWeap = false;
 		}
 		
 		float GetLocalFireVibration() 
@@ -211,7 +214,7 @@ namespace spades {
 		
 		Matrix4 GetViewWeaponMatrix()
 		{
-			if (scopeZoom != 0 && scopeZoom != -1 && AimDownSightState > 0.5f)
+			if (scopeZoom > 1 && AimDownSightState > 0.f)
 			{
 				if (swing.x > 0.01f)
 					swing.x = 0.01f;
@@ -224,7 +227,7 @@ namespace spades {
 			}
 			else if (AimDownSightState > 0.f)
 			{
-				swing.x *= -1;
+				//swing.x *= -1;
 			}
 		
 			Matrix4 mat;
@@ -251,24 +254,24 @@ namespace spades {
 			
 			if(reloading) 
 			{
-				if (reloadProgress < 0.15f)
+				if (reloadProgress < 0.15f && !bHideWeap)
 				{
 					float per = reloadProgress/0.15f;
 					per *= per;
 					mat = CreateTranslateMatrix(0.f, 0.f, per) * mat;		
-					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per) * mat;					
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per*0.8f) * mat;					
 				}
-				else if (reloadProgress < 0.75f)
+				else if (reloadProgress < 0.75f || bHideWeap)
 				{
 					mat = CreateTranslateMatrix(0.f, 0.f, 1.f) * mat;		
-					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), 1.f) * mat;
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), 0.8f) * mat;
 				}
 				else if (reloadProgress < 1.f)
 				{
 					float per = (0.75f-reloadProgress)/0.25f;
 					per *= per * -1;
 					mat = CreateTranslateMatrix(0.f, 0.f, per+1.f) * mat;		
-					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per+1.f) * mat;		
+					mat = CreateRotateMatrix(Vector3(1.f, 0.f, -0.5f), per*0.8f+0.8f) * mat;		
 				}
 			}
 			
@@ -276,8 +279,8 @@ namespace spades {
 			trans += Vector3(-0.125f * (1.f - AimDownSightStateSmooth),
 							 0.5f, GetZPos());
 			trans += swing * GetMotionGain();
-			if (scopeZoom != -1) 
-				trans += swing * GetMotionGain() * AimDownSightStateSmooth * scopeZoom/2;
+			//if (scopeZoom != -1) 
+				//trans += swing * GetMotionGain() * AimDownSightStateSmooth * scopeZoom/2;
 			trans += GetLocalFireVibrationOffset();
 			mat = CreateTranslateMatrix(trans) * mat;
 			
@@ -328,7 +331,7 @@ namespace spades {
 		{		
 			if (opt_muzzleFlash)
 			{
-				renderer.Color = Vector4(1.f, 1.f, 1.f, 0.75f-readyState); // premultiplied alpha
+				renderer.Color = Vector4(1.01f, 1.01f, 1.01f, 0.75f-readyState); // premultiplied alpha
 				renderer.AddSprite(flashImage, vec3, 0.4f+readyState/2, GetRandom());
 			}
 		}

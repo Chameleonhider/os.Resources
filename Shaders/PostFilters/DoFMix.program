@@ -1,2 +1,2 @@
-Shaders/PostFilters/DoFMix.fs
-Shaders/PostFilters/DoFMix.vs
+Shaders/Postfilters/DoFMix.fs
+Shaders/Postfilters/DoFMix.vs

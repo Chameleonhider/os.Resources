@@ -136,7 +136,7 @@ namespace spades
 			if(AimDownSightStateSmooth > 0.f)
 			{
 				//mat = AdjustToAlignSight(mat, Vector3(0.f, debug_b.FloatValue, debug_c.FloatValue), (AimDownSightStateSmooth - 0.5f) / 0.5f);
-				mat = AdjustToAlignSight(mat, Vector3(0.f, 50.f, -1.472f), (AimDownSightStateSmooth));
+				mat = AdjustToAlignSight(mat, Vector3(0.f, -50.f, -1.472f), (AimDownSightStateSmooth));
 			}
 			
 			ModelRenderParam param;

@@ -1,2 +1,2 @@
-Shaders/PostFilters/Fog.fs
-Shaders/PostFilters/Fog.vs
+Shaders/Postfilters/Fog.fs
+Shaders/Postfilters/Fog.vs

@@ -1,2 +1,2 @@
-Shaders/PostFilters/ColorCorrection.fs
-Shaders/PostFilters/ColorCorrection.vs
+Shaders/Postfilters/ColorCorrection.fs
+Shaders/Postfilters/ColorCorrection.vs

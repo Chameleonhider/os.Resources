@@ -1,2 +1,2 @@
-Shaders/PostFilters/PassThrough.fs
-Shaders/PostFilters/PassThrough.vs
+Shaders/Postfilters/PassThrough.fs
+Shaders/Postfilters/PassThrough.vs

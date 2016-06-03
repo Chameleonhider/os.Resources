@@ -33,7 +33,7 @@ varying vec4 dustTexCoord2;
 varying vec4 noiseTexCoord;
 
 void main() {
-	// dust filter texture
+	// dust filtered( texture
 	vec3 dust1 = texture2D(dustTexture, dustTexCoord1.xy).xyz;
 	vec3 dust2 = texture2D(dustTexture, dustTexCoord1.zw).xyz;
 	vec3 dust3 = texture2D(dustTexture, dustTexCoord2.xy).xyz;

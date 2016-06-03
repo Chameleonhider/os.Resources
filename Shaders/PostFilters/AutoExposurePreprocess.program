@@ -1,2 +1,2 @@
-Shaders/PostFilters/AutoExposurePreprocess.fs
-Shaders/PostFilters/PassThrough.vs
+Shaders/Postfilters/AutoExposurePreprocess.fs
+Shaders/Postfilters/PassThrough.vs

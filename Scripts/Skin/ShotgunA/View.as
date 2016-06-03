@@ -21,45 +21,131 @@
  namespace spades {
 	class ViewShotgunSkinA: 
 	IToolSkin, IViewToolSkin, IWeaponSkin,
-	BasicViewWeapon
-	{		
+	BasicViewWeapon {
+		
 		private AudioDevice@ audioDevice;
-		private Model@ gunModel;
-		private Model@ gunModel2;
-		private Model@ pumpModel;
-		private Model@ sightModelF;
+		//barrel
+		private Model@ BarrelModel1;
+		private Model@ BarrelModel2;
+		private Model@ BarrelModel3A;
+		private Model@ BarrelModel3B;
+		//frontsight
+		private Model@ FrontSModel1;
+		//cylinder
+		private Model@ CylinderModel1;
+		private Model@ CylinderModel2;
+		private Model@ CylinderModel3;
+		//casing
+		private Model@ CasingModel1;
+		private Model@ CasingModel2A;
+		//burned casing
+		private Model@ CasingBModel1;
+		private Model@ CasingBModel2A;
+		//frame
+		private Model@ FrameModel1;
+		private Model@ FrameModel2;
+		private Model@ FrameModel3A;
+		private Model@ FrameModel3B;
+		private Model@ FrameModel3C;
+		//rearsight
+		private Model@ RearSModel1;
+		//hammer
+		private Model@ HammerModel1;
+		private Model@ HammerModel2;
+		//trigger
+		private Model@ TriggerModel1;
+		
+		int shotsfired;
+		int bullet; 		//number of bullets in current magazine
+		int rbullet;
+		int basebullet;
+		bool first = true;
+		int shellState1;
+		int shellState2;
+		int shellState3;
+		int shellState4;
+		int shellState5;
+		int shellState6;
+		
+		bool cocked;
+		
 		private AudioChunk@ fireSound;
-		private AudioChunk@ fireFarSound;
-		private AudioChunk@ fireStereoSound;
 		private AudioChunk@ reloadSound;
 		private AudioChunk@ pumpSound;
 		
 		ViewShotgunSkinA(Renderer@ r, AudioDevice@ dev){
 			super(r);
 			@audioDevice = dev;
-			@gunModel = renderer.RegisterModel
-				("Models/Weapons/ShotgunA/Weapon1stMain.kv6");	
-			@gunModel2 = renderer.RegisterModel
-				("Models/Weapons/ShotgunA/Weapon1stSecond.kv6");
-			@pumpModel = renderer.RegisterModel
-				("Models/Weapons/ShotgunA/Weapon1stPump.kv6");
-			@sightModelF = renderer.RegisterModel
-				("Models/Weapons/ShotgunA/SightFront.kv6");
+			//barrel
+			@BarrelModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Barrel-P1.kv6");
+			@BarrelModel2 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Barrel-P2.kv6");
+			@BarrelModel3A = renderer.RegisterModel
+				("Models/Weapons/Revolver/Barrel-P3A.kv6");
+			@BarrelModel3B = renderer.RegisterModel
+				("Models/Weapons/Revolver/Barrel-P3B.kv6");
+			//front sight, together with barrel
+			@FrontSModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/FrontS-P3.kv6");
+				
+			//cylinder
+			@CylinderModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Cylinder-P1.kv6");
+			@CylinderModel2 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Cylinder-P2.kv6");
+			@CylinderModel3 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Cylinder-P3.kv6");
+			//casing
+			@CasingModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Casing-P1.kv6");
+			@CasingModel2A = renderer.RegisterModel
+				("Models/Weapons/Revolver/Casing-P2.kv6");
+			//burned casing
+			@CasingBModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/CasingB-P1.kv6");
+			@CasingBModel2A = renderer.RegisterModel
+				("Models/Weapons/Revolver/CasingB-P2.kv6");
+				
+			//frame
+			@FrameModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Frame-P1.kv6");
+			@FrameModel2 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Frame-P2.kv6");
+			@FrameModel3A = renderer.RegisterModel
+				("Models/Weapons/Revolver/Frame-P3A.kv6");
+			@FrameModel3B = renderer.RegisterModel
+				("Models/Weapons/Revolver/Frame-P3B.kv6");
+			@FrameModel3C = renderer.RegisterModel
+				("Models/Weapons/Revolver/Frame-P3C.kv6");
+			//rear sight, together with frame
+			@RearSModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/RearS-P1.kv6");
+				
+			//hammer	
+			@HammerModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Hammer-P1.kv6");
+			@HammerModel2 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Hammer-P2.kv6");
+			//trigger
+			@TriggerModel1 = renderer.RegisterModel
+				("Models/Weapons/Revolver/Trigger-P1.kv6");
+				
 			@fireSound = dev.RegisterSound
 				("Sounds/Weapons/ShotgunA/Fire0.wav");
 			@reloadSound = dev.RegisterSound
 				("Sounds/Weapons/ShotgunA/Reload.wav");
 			@pumpSound = dev.RegisterSound
 				("Sounds/Weapons/ShotgunA/Pump.wav");
+				
+			cocked = false;
 		}
 		
-		void Update(float dt)
-		{
+		void Update(float dt) {
 			BasicViewWeapon::Update(dt);
 		}
 		
-		void WeaponFired()
-		{
+		void WeaponFired(){
 			BasicViewWeapon::WeaponFired();
 			
 			if(!IsMuted)
@@ -69,9 +155,18 @@
 				param.volume = 5.f;
 				audioDevice.PlayLocal(fireSound, origin, param);
 			}
+			
+			shotsfired += 1;
+			if (bullet < 0) //just make sure it's not negative
+			{
+				bullet = 0;
+			}
+			bullet -= 1;
+			rbullet = 0;
+			basebullet = bullet;
 		}
 		
-		void ReloadingWeapon()
+		void ReloadingWeapon() 
 		{
 			if(!IsMuted)
 			{
@@ -80,10 +175,21 @@
 				param.volume = 1.f;
 				audioDevice.PlayLocal(reloadSound, origin, param);
 			}
+			if (Ammo < ClipSize)
+				bHideWeap = true;
+			else
+				bHideWeap = false;
+				
+			if (bullet < 1)
+			{
+				bullet = 0;
+			}
+			bullet += 1;
 		}
 		
-		void ReloadedWeapon()
+		void ReloadedWeapon() 
 		{
+			
 			if(!IsMuted)
 			{
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
@@ -91,11 +197,20 @@
 				param.volume = 1.f;
 				audioDevice.PlayLocal(pumpSound, origin, param);
 			}
+			bHideWeap = false;
+			
+			if (bullet < ClipSize)
+				bullet = Ammo; //maybe there aren't enough bullets?
+			else
+				bullet = ClipSize; //set it to max
+				
+			basebullet = bullet;
+			shotsfired = 0;
+			rbullet = 0;
 		}
-		float GetZPos() 
-		{
-			return 0.2f - AimDownSightStateSmooth * 0.175f * 1.007; // * debug_d; //0.05*3.5=0.175
-			//return 0.2f - AimDownSightStateSmooth * 0.0535f;
+		
+		float GetZPos() {
+			return 0.2f - AimDownSightStateSmooth * 0.038f * 3.3f;
 		}
 		
 		// rotates gun matrix to ensure the sight is in
@@ -108,133 +223,632 @@
 			return mat;
 		}
 		
-		void Draw2D()
-		{
-			// if(AimDownSightState > 0.6)
-				// return;
+		void Draw2D() {
+			//if(AimDownSightState > 0.6)
+			//	return;
 			//BasicViewWeapon::Draw2D();
 		}
 		
 		void AddToScene()
+		{	
+		
+		if (AimDownSightState > 0.5f)
+			swing.x *= -1;
+		
+	if (first == true)	
+	{	
+		shotsfired = 0;
+		bullet = ClipSize; 		//number of bullets in current magazine
+		rbullet = 0;
+		shellState1 = 1;
+		shellState2 = 1;
+		shellState3 = 1;
+		shellState4 = 1;
+		shellState5 = 1;
+		shellState6 = 1;
+		first = false;
+	}
+
+	//make sure its not over ClipSize
+	if (bullet > ClipSize)
+	{
+		bullet = ClipSize; 
+	}
+	//just in case make sure its not negative
+	if (bullet < 0)
+	{
+		bullet = 0; 
+	}
+	//set reloaded bullet count-----IMPORTANT-------
+	rbullet = bullet - basebullet;
+
+	//sets all bullets to be all either unused or used
+	if (shotsfired == 0 && bullet == 6)
+	{
+		shellState1 = 1;
+		shellState2 = 1;
+		shellState3 = 1;
+		shellState4 = 1;
+		shellState5 = 1;
+		shellState6 = 1;
+	}
+
+	//check after shooting which ones turn black
+	if (ReadyState < 1.f)
+	{
+		if (shotsfired == 1)
 		{
-			//BasicViewWeapon::DrawXH();
-			float move = 0;
+			shellState1 = 2;
+			shellState2 = 1;
+			shellState3 = 1;
+			shellState4 = 1;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 2)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 1;
+			shellState4 = 1;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 3)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 1;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 4)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 5)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 2;
+			shellState6 = 1;
+		}
+		if (shotsfired == 6)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 2;
+			shellState6 = 2;
+		}
+	}
+
+	//the cylinder rotates after shooting and then resets, so we need to push shells "forward"
+	//and put an unused shell to be ready to fire
+	else
+	{
+		if (shotsfired == 1)
+		{
+			shellState1 = 1;
+			shellState2 = 2;
+			shellState3 = 1;
+			shellState4 = 1;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 2)
+		{
+			shellState1 = 1;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 1;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 3)
+		{
+			shellState1 = 1;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 1;
+			shellState6 = 1;
+		}
+		if (shotsfired == 4)
+		{
+			shellState1 = 1;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 2;
+			shellState6 = 1;
+		}
+		if (shotsfired == 5)
+		{
+			shellState1 = 1;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 2;
+			shellState6 = 2;
+		}
+		if (shotsfired == 6)
+		{
+			shellState1 = 2;
+			shellState2 = 2;
+			shellState3 = 2;
+			shellState4 = 2;
+			shellState5 = 2;
+			shellState6 = 2;
+		}
+	}
+
 			Matrix4 mat = CreateScaleMatrix(0.015625f);
 			mat = GetViewWeaponMatrix() * mat;
 			
-			bool reloading = IsReloading;
-			float reload = ReloadProgress;
-			Vector3 leftHand, rightHand;
+//side
 			
-			//leftHand = mat * Vector3(0.f, 4.f, 2.f);
-			//rightHand = mat * Vector3(0.f, -8.f, 2.f);
+	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, -1.f), asin(1));
+	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, 1.f), asin(1));
+//----
+//normal
+	//mat *= CreateTranslateMatrix(ConfigItem("d_a", "0").FloatValue, ConfigItem("d_b", "0").FloatValue, ConfigItem("d_c", "0").FloatValue);
+	
+	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, 1.f), 0.15f);
+//----
+			
+			bool reloading = IsReloading;
+			float reload = ReloadProgress * 0.5f;
+			Vector3 leftHand, rightHand;
+			//(x,y,z) (x+down/-up, y+rollright/-rollleft, z+turnleft?/-turnright?)
+			//(x,y,z) (x+left/-right, y+further/-closer, z+down/-up)
 			leftHand = Vector3(0.f, 0.f, 0.f);
 			rightHand = Vector3(0.f, 0.f, 0.f);
 			
 			Vector3 leftHand2 = mat * Vector3(5.f, -10.f, 4.f);
-			Vector3 leftHand3 = mat * Vector3(1.f, 1.f, 2.f);
+			Vector3 leftHand3 = mat * Vector3(1.f, 6.f, -4.f);
+			Vector3 leftHand4 = mat * Vector3(1.f, 9.f, -6.f);
 			
-			if(AimDownSightStateSmooth > 0.f)
-			{
-				//mat = AdjustToAlignSight(mat, Vector3(0.f, 8.5f, -4.4f), AimDownSightStateSmooth);
-				mat = AdjustToAlignSight(mat, Vector3(0.f, -60.f, -1.472f), (AimDownSightStateSmooth));
+			if(AimDownSightStateSmooth > 0.8f){
+				mat = AdjustToAlignSight(mat, Vector3(0.f, -100.f, -2.5f), (AimDownSightStateSmooth - 0.8f) / 0.2f);
 			}
+			mat *= CreateTranslateMatrix(AimDownSightStateSmooth * 3.625f , AimDownSightStateSmooth * -4.f, AimDownSightStateSmooth * -4.6f);
+			mat *= CreateTranslateMatrix(-4.f, 0.f, 0.f);
+			mat *= CreateTranslateMatrix(0, 25, 0);
+			mat *= CreateScaleMatrix(0.5f);
 			
 			ModelRenderParam param;
-			Matrix4 weapMatrix = eyeMatrix * mat;
+			param.depthHack = false;
+			
+			Matrix4 weapMatrix = eyeMatrix * mat;			
+			Matrix4 tempMatrix = weapMatrix;
+			Matrix4 customModelMatrix = weapMatrix;
 			
 			if (readyState < 0.07f)
-				BasicViewWeapon::DrawFlash(weapMatrix * Vector3(0, 100, 2));
+				BasicViewWeapon::DrawFlash(weapMatrix * Vector3(0, 70, 2));
+			
+			//(x,y,z) (x+left/-right, y+further/-closer, z+down/-up)
+//BARREL
+			customModelMatrix = weapMatrix;	
+			//customModelMatrix *= CreateScaleMatrix(0.375f, 1.25f, 0.375f);
+			customModelMatrix *= CreateScaleMatrix(1.f/3.f, 1.25f, 1.f/3.f);
+			customModelMatrix *= CreateTranslateMatrix(2.25f, 11.9f, 6.5f);
+			//main part 
+			param.matrix = customModelMatrix;
+			renderer.AddModel(BarrelModel1, param);
+			
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2), 1.f, sqrt(2));
+			renderer.AddModel(BarrelModel2, param);
+			
+			//LEFT SIDE UP
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, -1.0f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(5)/2, 1.f, sqrt(5)/2);
+			renderer.AddModel(BarrelModel3A, param);
+			
+			//LEFT SIDE DOWN
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 1.0f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, -1.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(5)/2, 1.f, sqrt(5)/2);
+			renderer.AddModel(BarrelModel3A, param);
+			
+			//RIGHT SIDE UP
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, -1.0f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, -1.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(5)/2, 1.f, sqrt(5)/2);
+			renderer.AddModel(BarrelModel3B, param);
+			
+			//RIGHT SIDE DOWN
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 1.0f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(5)/2, 1.f, sqrt(5)/2);
+			renderer.AddModel(BarrelModel3B, param);
+			
+		//FRONT SIGHT			
+			customModelMatrix = weapMatrix;
+			//customModelMatrix *= CreateScaleMatrix(1.f, 1.f, 1.f);
+			//customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			//customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(0.f));
+			
+			//SLOPE
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.25f, -0.5f, 0.f);
+			param.matrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), atan(50.f));
+			param.matrix *= CreateScaleMatrix(1.f, sqrt(26)/25, 1.f);
+			renderer.AddModel(FrontSModel1, param);			
+//END OF BARREL
+			//(x,y,z) (x+left/-right, y+further/-closer, z+down/-up)
+//CYLINDER
+			
+			customModelMatrix = weapMatrix;	
+			customModelMatrix *= CreateScaleMatrix(0.375f, 2.0f, 0.375f);
+			customModelMatrix *= CreateTranslateMatrix(2.f, 2.25f, 9.4f);
+		//SHOOTING
+			if(ReadyState < 1.f && cocked)
+			{
+				if (ReadyState < 0.3f)
+				{
+					//nuthing but a g thang
+				}
+				else if (ReadyState < 0.9f)
+				{
+					float per = (ReadyState - 0.3f) / 0.6f;
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), per*acos(0.5f));
+				}
+				else
+				{
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), acos(0.5f));
+				}
+			}
+			// else
+			// {
+				// customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), shotsfired*acos(0.5f));
+			// }
+		//RELOADING
+			// if(reload < 2.f)
+			// {
+				// if (reload > 1.f)
+				// {
+					// float per = (reload - 1.f) / 2.f;
+					// customModelMatrix *= CreateTranslateMatrix(-20.f, 0.f, 0.f);
+					// customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), per*atan(1));
+					// customModelMatrix *= CreateTranslateMatrix(20.f, 0.f, 0.f);
+				// }
+			// }
+			
+			if (rbullet <= 1 && bullet == ClipSize && reload < 0.53f)
+			{
+				if (reload < 0.1f)
+				{
+					float per = reload / 0.1f;
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, 20.f);
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, -1.f, 0.f), per*atan(1));
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, -20.f);
+				}
+				else if (reload < 0.4f)
+				{
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, 20.f);
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, -1.f, 0.f), atan(1));
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, -20.f);
+				}
+				else if (reload < 0.53f)
+				{
+					float per = (reload - 0.4f) / 0.13f;
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, 20.f);
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, -1.f, 0.f), atan(1));
+					customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), per*atan(1));
+					customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, -20.f);
+				}
+			}
+			//main part
+			//customModelMatrix *= CreateScaleMatrix(1.f, 1.f, 4.f);
+			
+			//customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, -15.f);
+			//customModelMatrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 10*reload*atan(-1.f));
+			//customModelMatrix *= CreateTranslateMatrix(0.f, 0.f, 15.f);
+			
+			//customModelMatrix *= CreateScaleMatrix(1.f, 1.f, 0.25f);
+			
+			param.matrix = customModelMatrix;			
+			//0 DEGREE PART
+			//param.matrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			//param.matrix *= CreateScaleMatrix(1.f, 1.f, 1.f);
+			tempMatrix = param.matrix;
+			renderer.AddModel(CylinderModel1, param);
+			//CASING 0
+			if (shellState1 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState1 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//CASING 180
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState4 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState4 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//0+30 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), asin(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(2.5f)/2.5f, 1.f, 0.815);
+			renderer.AddModel(CylinderModel3, param);
+			//0+45 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			renderer.AddModel(CylinderModel2, param);
+			//CASING 0+45
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			if (shellState1 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState1 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
+			//CASING 180+45
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState4 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState4 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
+			
+			//60 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), acos(0.5f));
+			tempMatrix = param.matrix;
+			renderer.AddModel(CylinderModel1, param);
+			//CASING 60
+			if (shellState2 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState2 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//CASING 240
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState5 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState5 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//60+30 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), asin(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(2.5f)/2.5f, 1.f, 0.815);
+			renderer.AddModel(CylinderModel3, param);
+			//60+45 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			renderer.AddModel(CylinderModel2, param);
+			//CASING 60+45
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			if (shellState2 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState2 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
+			//CASING 240+45
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState5 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState5 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
+			
+			//120 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), acos(0.5f));
+			tempMatrix = param.matrix;
+			renderer.AddModel(CylinderModel1, param);
+			//CASING 120
+			if (shellState3 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState3 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//CASING 300
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState6 == 1)
+			{
+				renderer.AddModel(CasingModel1, param);
+			}
+			else if (shellState6 == 2)
+			{
+				renderer.AddModel(CasingBModel1, param);
+			}
+			//120+30 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), asin(0.5f));
+			param.matrix *= CreateScaleMatrix(sqrt(2.5f)/2.5f, 1.f, 0.815);
+			renderer.AddModel(CylinderModel3, param);
+			//120+45 DEGREE PART
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			renderer.AddModel(CylinderModel2, param);
+			//CASING 120+45
+			param.matrix = tempMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(sqrt(2)/2, 1.f, sqrt(2)/2);
+			if (shellState3 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState3 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
+			//CASING 300+45
+			param.matrix *= CreateRotateMatrix(Vector3(0.f, 1.f, 0.f), 2*asin(1));
+			if (shellState6 == 1)
+			{
+				renderer.AddModel(CasingModel2A, param);
+			}
+			else if (shellState6 == 2)
+			{
+				renderer.AddModel(CasingBModel2A, param);
+			}
 				
+//END OF CYLINDER
+			//(x,y,z) (x+left/-right, y+further/-closer, z+down/-up)
+//FRAME
+			customModelMatrix = weapMatrix;	
+			customModelMatrix *= CreateScaleMatrix(0.5f, 1.f, 1.f);
+			//customModelMatrix *= CreateTranslateMatrix(0.25f, 0.f, 0.f);
+			//main part
+			param.matrix = customModelMatrix;
+			renderer.AddModel(FrameModel1, param);
+			//45 degrees
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(1.f, sqrt(2)/2, sqrt(2)/2);
+			renderer.AddModel(FrameModel2, param);
+			//arctangent(0.5) degrees
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(1.f, sqrt(5)/2, sqrt(5)/2);
+			renderer.AddModel(FrameModel3A, param);
+			//arctangent(0.5) degrees
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, -0.5f);
+			param.matrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(1.f, sqrt(5)/2, sqrt(5)/2);
+			renderer.AddModel(FrameModel3B, param);
+			//arctangent(0.5) degrees
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateTranslateMatrix(0.f, 0.f, 0.f);
+			param.matrix *= CreateRotateMatrix(Vector3(-1.f, 0.f, 0.f), atan(0.5f));
+			param.matrix *= CreateScaleMatrix(1.f, sqrt(5)/2, sqrt(5)/2);
+			renderer.AddModel(FrameModel3C, param);
+			
+		//REAR SIGHT			
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateScaleMatrix(0.25f, 0.125f, 0.125f);
+			param.matrix *= CreateTranslateMatrix(4.5f, 7.f, -4.f);
+			renderer.AddModel(RearSModel1, param);
+//END OF FRAME
+//HAMMER
+			customModelMatrix = weapMatrix;	
+			customModelMatrix *= CreateTranslateMatrix(-0.5f, -0.5f, 6.5f);
+			
+			if (AimDownSightState > 0 || cocked)
+			{			
+				if (ReadyState < 0.3f)
+				{
+					//nuthing but a g thang
+					cocked = false;
+				}
+				else if (ReadyState < 0.9f)
+				{
+					float per = (ReadyState - 0.3f) / 0.6f;
+					customModelMatrix *= CreateRotateMatrix(Vector3(-1.f, 0.f, 0.f), per*0.8f);
+					cocked = true;
+				}
+				else if (cocked)
+				{
+					customModelMatrix *= CreateRotateMatrix(Vector3(-1.f, 0.f, 0.f), 0.8f);
+				}
+			}
+			if (raiseState < 0.2f)
+			{
+				cocked = false;
+			}
+			
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateScaleMatrix(0.5f, 0.25f, 0.25f);
+			renderer.AddModel(HammerModel1, param);
+			
+			param.matrix = customModelMatrix;
+			param.matrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), atan(1));
+			param.matrix *= CreateScaleMatrix(0.5f, sqrt(2)/8, sqrt(2)/8);
+			renderer.AddModel(HammerModel2, param);
+			/*
+//END OF HAMMER
+//TRIGGER
 			param.matrix = weapMatrix;
-			renderer.AddModel(gunModel, param);
-			renderer.AddModel(gunModel2, param);
-			param.matrix *=	CreateTranslateMatrix(0.f, move, 0.f);
-			renderer.AddModel(pumpModel, param);
-			param.matrix = weapMatrix;
-			param.matrix *= CreateTranslateMatrix(0.f, 95.75f, 0.f);
-			param.matrix *= CreateScaleMatrix(0.5f);
-			renderer.AddModel(sightModelF, param); // front
-			// reload action
-			reload *= 0.5f;
+			renderer.AddModel(TriggerModel1, param);
 			
+//END OF TRIGGER
+
+			// draw sights
+			/*
+			Matrix4 sightMat = weapMatrix;
+			sightMat *= CreateTranslateMatrix(0.05f, 5.f, -4.85f);
+			sightMat *= CreateScaleMatrix(0.1f);
+			param.matrix = sightMat;
+			renderer.AddModel(sightModel1, param); // front
 			
-			if(reloading) {
-				if(reload < 0.2f) {
-					float per = reload / 0.2f;
-					leftHand = Mix(leftHand, leftHand2,
-						SmoothStep(per));
-				}else if(reload < 0.35f){
-					float per = (reload - 0.2f) / 0.15f;
-					leftHand = Mix(leftHand2, leftHand3,
-						SmoothStep(per));
-				}else if(reload < 0.5f){
-					float per = (reload - 0.35f) / 0.15f;
-					leftHand = Mix(leftHand3, leftHand,
-						SmoothStep(per));
-				}
-			}
+			sightMat = weapMatrix;
+			sightMat *= CreateTranslateMatrix(0.025f, 5.f, -4.85f);
+			sightMat *= CreateScaleMatrix(0.05f);
+			param.matrix = sightMat;
+			renderer.AddModel(sightModel3, param); // front pin
 			
-			// motion blending parameter
-			float cockFade = 1.f;
-			if(reloading){
-				if(reload < 0.25f ||
-					ammo < (clipSize - 1)) {
-					cockFade = 0.f;	
-				}else{
-					cockFade = (reload - 0.25f) * 10.f;
-					cockFade = Min(cockFade, 1.f);
-				}
-			}
-			
-			if(cockFade > 0.f){
-				float cock = 0.f;
-				float tim = 1.f - readyState;
-				if(tim < 0.f){
-					// might be right after reloading
-					if(ammo >= clipSize && reload > 0.5f && reload < 1.f){
-						tim = reload - 0.5f;
-						if(tim < 0.05f){
-							cock = 0.f;
-						}else if(tim < 0.12f){
-							cock = (tim - 0.05f) / 0.07f;
-						}else if(tim < 0.26f){
-							cock = 1.f;
-						}else if(tim < 0.36f){
-							cock = 1.f - (tim - 0.26f) / 0.1f;
-						}
-					}
-				}else if(tim < 0.2f){
-					cock = 0.f;
-				}else if(tim < 0.3f){
-					cock = (tim - 0.2f) / 0.1f;
-				}else if(tim < 0.42f){
-					cock = 1.f;
-				}else if(tim < 0.52f){
-					cock = 1.f - (tim - 0.42f) / 0.1f;
-				}else{
-					cock = 0.f;
-				}
-				
-				cock *= cockFade;
-				mat = mat * CreateTranslateMatrix(0.f, cock * -1.5f, 0.f);
-				
-				leftHand = Mix(leftHand,
-					mat * Vector3(0.f, 4.f, 2.f), cockFade);
-			}
-			
-			param.matrix = eyeMatrix * mat;
-			//renderer.AddModel(pumpModel, param);
-			
-			leftHand = Vector3(0.f, 0.f, 0.f);
-			rightHand = Vector3(0.f, 0.f, 0.f);
+			sightMat = weapMatrix;
+			sightMat *= CreateTranslateMatrix(0.04f, -9.f, -4.9f);
+			sightMat *= CreateScaleMatrix(0.08f);
+			param.matrix = sightMat;
+			renderer.AddModel(sightModel2, param); // rear
+			*/
 			
 			LeftHandPosition = leftHand;
 			RightHandPosition = rightHand;
 		}
-	}
+		
+		}
 	
-	IWeaponSkin@ CreateViewShotgunSkinA(Renderer@ r, AudioDevice@ dev) {
+	IWeaponSkin@ CreateViewShotgunSkinA(Renderer@ r, AudioDevice@ dev) 
+	{
 		return ViewShotgunSkinA(r, dev);
 	}
 }

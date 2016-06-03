@@ -24,7 +24,6 @@ namespace spades
 	IToolSkin, IViewToolSkin, IWeaponSkin,
 	BasicViewWeapon
 	{
-		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
 		private AudioDevice@ audioDevice;
 		
 		private Model@ gunModel;

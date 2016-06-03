@@ -1,2 +1,2 @@
-Shaders/PostFilters/DoFCoCGen.fs
-Shaders/PostFilters/DoFCoCGen.vs
+Shaders/Postfilters/DoFCoCGen.fs
+Shaders/Postfilters/DoFCoCGen.vs

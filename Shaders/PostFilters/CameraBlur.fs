@@ -27,7 +27,7 @@ varying vec2 newCoord;
 varying vec3 oldCoord;
 
 // linearize gamma
-vec3 filter(vec3 col){
+vec3 filtered(vec3 col){
 	return col * col;
 }
 

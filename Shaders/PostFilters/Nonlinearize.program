@@ -1,2 +1,2 @@
-Shaders/PostFilters/Nonlinearize.fs
-Shaders/PostFilters/Nonlinearize.vs
+Shaders/Postfilters/Nonlinearize.fs
+Shaders/Postfilters/Nonlinearize.vs

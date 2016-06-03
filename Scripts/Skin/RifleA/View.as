@@ -24,7 +24,6 @@ namespace spades
 	IToolSkin, IViewToolSkin, IWeaponSkin,
 	BasicViewWeapon
 	{
-		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
 		private AudioDevice@ audioDevice;
 		
 		private Model@ gunModel;
@@ -186,7 +185,7 @@ namespace spades
 					posM = (eyeMatrix * mat2 * CreateTranslateMatrix(0, 100, Length*225*coef)).GetOrigin();
 					renderer.AddSprite(scopeImage2, posM, 0.4f, 3.14159265f);
 				}
-				weapMatrix *= CreateTranslateMatrix(Swing.x*-150*AimDownSightStateSmooth, -5.f*AimDownSightStateSmooth, Swing.z*-300*AimDownSightStateSmooth);
+				weapMatrix *= CreateTranslateMatrix(Swing.x*-160*AimDownSightStateSmooth, -5.f*AimDownSightStateSmooth, Swing.z*-320*AimDownSightStateSmooth);
 				weapMatrix *= CreateRotateMatrix(Vector3(1.f, 0.f, 0.f), 0.1f*AimDownSightStateSmooth);
 				weapMatrix *= CreateScaleMatrix(Vector3(2.f, 2.f, 2.f)*AimDownSightStateSmooth);
 			}

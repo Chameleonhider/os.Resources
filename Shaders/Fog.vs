@@ -23,6 +23,6 @@ vec4 FogDensity(float poweredLength) {
 	distance = min(distance * (1. / 128. / 128.), 1.);
 	float weakenedDensity = 1. - distance;
 	distance *= distance;
-	return mix(vec4(distance, distance, distance, 0), vec4(1. - weakenedDensity),
-					 vec4(0, 0.3, 1.0, 0));
+	return mix(vec4(distance, distance, 0., 0.), vec4(1. - weakenedDensity),
+					 vec4(0., 0.3, 1.0, 0.));
 }
