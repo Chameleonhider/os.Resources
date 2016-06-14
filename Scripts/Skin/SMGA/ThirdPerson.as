@@ -148,6 +148,7 @@
 				if (clientDistance < snd_maxDistance/2.f)
 				{
 					param.volume = 5.f;
+					param.pitch += (GetRandom()-GetRandom())*0.05f;
 					audioDevice.Play(fire0, origin, param);
 				}
 				else if (clientDistance < snd_maxDistance)
@@ -155,7 +156,7 @@
 					param.volume = 1.f;
 					audioDevice.Play(fire1, origin, param);
 				}
-				else if (clientDistance < snd_maxDistance*2.f)
+				else if (clientDistance < snd_maxDistance*2.f && soundDistance < snd_maxDistance*2)
 				{
 					param.volume = 0.5f;
 					audioDevice.Play(fire2, origin, param);

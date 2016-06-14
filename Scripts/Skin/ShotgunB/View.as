@@ -71,6 +71,7 @@
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 5.f;
+				param.pitch += (GetRandom()-GetRandom())*0.1f;
 				audioDevice.PlayLocal(fireSound, origin, param);
 			}
 		}
@@ -82,6 +83,7 @@
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 1.f;
+				param.pitch += (GetRandom()-GetRandom())*0.1f;
 				audioDevice.PlayLocal(reloadSound, origin, param);
 			}
 			if (Ammo < ClipSize)
@@ -119,9 +121,8 @@
 		
 		void Draw2D()
 		{
-			// if(AimDownSightState > 0.6)
-				// return;
-			//BasicViewWeapon::Draw2D();
+			if(AimDownSightState < 0.5 && draw2d)
+				BasicViewWeapon::Draw2D();
 		}
 		
 		void SetAlpha()
@@ -165,7 +166,7 @@
 			Vector3 leftHand2 = mat * Vector3(5.f, -10.f, 4.f);
 			Vector3 leftHand3 = mat * Vector3(1.f, 1.f, 2.f);
 			
-			if(AimDownSightStateSmooth > 0.f)
+			if(AimDownSightStateSmooth > 0.01f)
 			{
 				//mat = AdjustToAlignSight(mat, Vector3(0.f, 8.5f, -4.4f), AimDownSightStateSmooth);
 				mat = AdjustToAlignSight(mat, Vector3(0.f, -100.f, -1.472f), (AimDownSightStateSmooth));
@@ -189,7 +190,7 @@
 				Matrix4 mat2 = GetViewWeaponMatrix() * CreateScaleMatrix(0.015625f);	
 				mat2 = mat2 * CreateTranslateMatrix(0, 0, -1);
 				int coef = 1;						
-				if(Swing.Length > 0.f)
+				if(Length > 0.0001f)
 				{
 					if(Swing.z >= 0)
 						coef *= -1;
@@ -199,7 +200,7 @@
 					float ang = asin(Swing.x/Length);
 					mat2 *= CreateRotateMatrix(Vector3(0.f, coef, 0.f), ang);					
 				}
-				if(AimDownSightStateSmooth > 0.f)
+				if(AimDownSightStateSmooth > 0.01f)
 					mat2 = AdjustToAlignSight(mat2, Vector3(0, 50, 0), AimDownSightStateSmooth);
 				//End of parallax adjustment
 				

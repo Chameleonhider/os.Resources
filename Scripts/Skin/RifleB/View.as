@@ -81,6 +81,7 @@ namespace spades
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 5.f;
+				param.pitch += (GetRandom()-GetRandom())*0.1f;
 				if (ammo > 1)
 					audioDevice.PlayLocal(fireSound, origin, param);
 				else
@@ -119,8 +120,8 @@ namespace spades
 		
 		void Draw2D()
 		{
-			//if(AimDownSightState < 0.5)
-			//BasicViewWeapon::Draw2D();
+			if(AimDownSightState < 0.5 && draw2d)
+				BasicViewWeapon::Draw2D();
 		}
 		
 		void AddToScene() 
@@ -140,7 +141,7 @@ namespace spades
 			Vector3 rightHand3 = mat * Vector3(-2.f, -7.f, -4.f);
 			Vector3 rightHand4 = mat * Vector3(-3.f, -4.f, -6.f);
 			
-			if(AimDownSightStateSmooth > 0.f)
+			if(AimDownSightStateSmooth > 0.01f)
 			{
 				mat = AdjustToAlignSight(mat, Vector3(0.f, -100.f, -1.472f), AimDownSightStateSmooth);
 			}
@@ -157,7 +158,7 @@ namespace spades
 				float Length = Vector3(Swing.x, 0, Swing.z).Length;
 				Matrix4 mat2 = GetViewWeaponMatrix() * CreateScaleMatrix(0.015625f);						
 				int coef = 1;						
-				if(Swing.Length > 0.f)
+				if(Length > 0.0001f)
 				{
 					if(Swing.z >= 0)
 						coef *= -1;
@@ -167,7 +168,7 @@ namespace spades
 					float ang = asin(Swing.x/Length);
 					mat2 *= CreateRotateMatrix(Vector3(0.f, coef, 0.f), ang);					
 				}
-				if(AimDownSightStateSmooth > 0.f)
+				if(AimDownSightStateSmooth > 0.01f)
 					mat2 = AdjustToAlignSight(mat2, Vector3(0, 100, 0), AimDownSightStateSmooth);
 				//End of parallax adjustment
 				

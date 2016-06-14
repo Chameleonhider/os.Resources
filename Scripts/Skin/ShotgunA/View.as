@@ -153,6 +153,7 @@
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 5.f;
+				param.pitch += (GetRandom()-GetRandom())*0.1f;
 				audioDevice.PlayLocal(fireSound, origin, param);
 			}
 			
@@ -173,6 +174,7 @@
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 1.f;
+				param.pitch += (GetRandom()-GetRandom())*0.1f;
 				audioDevice.PlayLocal(reloadSound, origin, param);
 			}
 			if (Ammo < ClipSize)
@@ -223,10 +225,10 @@
 			return mat;
 		}
 		
-		void Draw2D() {
-			//if(AimDownSightState > 0.6)
-			//	return;
-			//BasicViewWeapon::Draw2D();
+		void Draw2D() 
+		{
+			if(AimDownSightState < 0.5 && draw2d)
+				BasicViewWeapon::Draw2D();
 		}
 		
 		void AddToScene()
@@ -397,8 +399,8 @@
 			
 //side
 			
-	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, -1.f), asin(1));
-	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, 1.f), asin(1));
+	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, -1.f), asin(1)); //left side
+	//mat *= CreateRotateMatrix(Vector3(0.f, 0.f, 1.f), asin(1)); //right side
 //----
 //normal
 	//mat *= CreateTranslateMatrix(ConfigItem("d_a", "0").FloatValue, ConfigItem("d_b", "0").FloatValue, ConfigItem("d_c", "0").FloatValue);

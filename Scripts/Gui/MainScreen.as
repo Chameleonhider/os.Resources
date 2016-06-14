@@ -57,8 +57,8 @@ namespace spades {
 		void SetupRenderer() {
 			// load map
 			@renderer.GameMap = GameMap("Maps/Title.vxl");
-			renderer.FogColor = Vector3(0.1f, 0.10f, 0.1f);
-			renderer.FogDistance = 128.f;
+			renderer.FogColor = Vector3(0.2f, 0.2f, 0.2f);
+			renderer.FogDistance = 64.f;
 			time = -1.f;
 			
 			// returned from the client game, so reload the server list.
@@ -124,7 +124,7 @@ namespace spades {
 				Vector3(cameraX, 256.f, 12.f), Vector3(cameraX + .1f, 257.f, 12.5f), Vector3(0.f, 0.f, -1.f),
 				30.f);
 			sceneDef.zNear = 0.1f;
-			sceneDef.zFar = 222.f;
+			sceneDef.zFar = 130.f;
 			sceneDef.time = int(time * 1000.f);
 			sceneDef.viewportWidth = int(renderer.ScreenWidth);
 			sceneDef.viewportHeight = int(renderer.ScreenHeight);
@@ -337,6 +337,13 @@ namespace spades {
 			float footerPos = Manager.Renderer.ScreenHeight - 50.f;
 			{
 				spades::ui::Button button(Manager);
+				button.Caption = _Tr("MainScreen", "LocalHost");
+				button.Bounds = AABB2(contentsLeft + contentsWidth - 240.f, 200.f, 90.f, 30.f);
+				button.Activated = EventHandler(this.OnLocalHostPressed);
+				AddChild(button);
+			}
+			{
+				spades::ui::Button button(Manager);
 				button.Caption = _Tr("MainScreen", "Connect");
 				button.Bounds = AABB2(contentsLeft + contentsWidth - 150.f, 200.f, 150.f, 30.f);
 				button.Activated = EventHandler(this.OnConnectPressed);
@@ -349,26 +356,6 @@ namespace spades {
 				addressField.Text = cg_lastQuickConnectHost.StringValue;
 				addressField.Changed = spades::ui::EventHandler(this.OnAddressChanged);
 				AddChild(addressField);
-			}
-			{
-				@protocol3Button = ProtocolButton(Manager);
-				protocol3Button.Bounds = AABB2(contentsLeft + contentsWidth - 240.f + 6.f, 200, 
-					40.f, 30.f);
-				protocol3Button.Caption = _Tr("MainScreen", "0.75");
-				protocol3Button.Activated = spades::ui::EventHandler(this.OnProtocol3Pressed);
-				protocol3Button.Toggle = true;
-				protocol3Button.Toggled = cg_protocolVersion.IntValue == 3;
-				AddChild(protocol3Button);
-			}
-			{
-				@protocol4Button = ProtocolButton(Manager);
-				protocol4Button.Bounds = AABB2(contentsLeft + contentsWidth - 200.f + 6.f, 200, 
-					40.f, 30.f);
-				protocol4Button.Caption = _Tr("MainScreen", "0.76");
-				protocol4Button.Activated = spades::ui::EventHandler(this.OnProtocol4Pressed);
-				protocol4Button.Toggle = true;
-				protocol4Button.Toggled = cg_protocolVersion.IntValue == 4;
-				AddChild(protocol4Button);
 			}
 			{
 				spades::ui::Button button(Manager);
@@ -612,7 +599,7 @@ namespace spades {
 					}
 				}
 				list2.insertLast(item);
-			}
+			}	
 			
 			ServerListModel model(Manager, list2);
 			@serverList.Model = model;
@@ -645,17 +632,7 @@ namespace spades {
 		}
 		
 		private void SetProtocolVersion(int ver) {
-			protocol3Button.Toggled = (ver == 3);
-			protocol4Button.Toggled = (ver == 4);
 			cg_protocolVersion = ver;
-		}
-		
-		private void OnProtocol3Pressed(spades::ui::UIElement@ sender) {
-			SetProtocolVersion(3);
-		}
-		
-		private void OnProtocol4Pressed(spades::ui::UIElement@ sender) {
-			SetProtocolVersion(4);
 		}
 		
 		private void OnFilterProtocol3Pressed(spades::ui::UIElement@ sender) {
@@ -707,6 +684,10 @@ namespace spades {
 		
 		private void OnConnectPressed(spades::ui::UIElement@ sender) {
 			Connect();
+		}
+		private void OnLocalHostPressed(spades::ui::UIElement@ sender) {
+			addressField.Text = "aos://16777343";
+			cg_lastQuickConnectHost = addressField.Text;
 		}
 		
 		void HotKey(string key) {

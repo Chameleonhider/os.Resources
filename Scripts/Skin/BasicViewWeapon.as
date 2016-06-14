@@ -26,6 +26,7 @@ namespace spades {
 		private int defFireVib = ConfigItem("v_defaultFireVibration", "0").IntValue;
 		private bool opt_muzzleFlash = ConfigItem("opt_muzzleFlash", "1").IntValue != 0;
 		private bool opengl = ConfigItem("r_renderer", "gl").StringValue == "gl";
+		private bool draw2d = ConfigItem("v_freeAim", "1").FloatValue == 0.f;
 		
 		// IToolSkin
 		private float sprintState;
@@ -227,7 +228,8 @@ namespace spades {
 			}
 			else if (AimDownSightState > 0.f)
 			{
-				//swing.x *= -1;
+				swing.x *= -1;
+				swing.z *= -1;
 			}
 		
 			Matrix4 mat;
@@ -331,7 +333,7 @@ namespace spades {
 		{		
 			if (opt_muzzleFlash)
 			{
-				renderer.Color = Vector4(1.01f, 1.01f, 1.01f, 0.75f-readyState); // premultiplied alpha
+				renderer.Color = Vector4(1.02f, 1.02f, 1.01f, 0.75f-readyState); // premultiplied alpha
 				renderer.AddSprite(flashImage, vec3, 0.4f+readyState/2, GetRandom());
 			}
 		}

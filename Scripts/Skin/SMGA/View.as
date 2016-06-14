@@ -69,6 +69,7 @@ namespace spades
 				Vector3 origin = Vector3(0.4f, -0.3f, 0.5f);
 				AudioParam param;
 				param.volume = 5.f;
+				param.pitch += (GetRandom()-GetRandom())*0.05f;
 				audioDevice.PlayLocal(fireSound, origin, param);
 			}
 		}
@@ -102,7 +103,8 @@ namespace spades
 		
 		void Draw2D()
 		{
-			//BasicViewWeapon::Draw2D();
+			if(AimDownSightState < 0.5 && draw2d)
+				BasicViewWeapon::Draw2D();
 		}
 		
 		void AddToScene() 
