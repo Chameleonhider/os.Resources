@@ -38,15 +38,20 @@ attribute vec4 colorAttribute;
 // [nx, ny, nz]
 attribute vec3 normalAttribute;
 
-// [sx, sy, sz]
-attribute vec3 fixedPositionAttribute;
+//Chameleon: commented out in search of FPS loss
+// [sx, sy, sz] 
+// attribute vec3 fixedPositionAttribute;
 
 varying vec2 ambientOcclusionCoord;
 varying vec4 color;
 varying vec3 fogDensity;
 varying vec2 detailCoord;
 
-void PrepareForShadowForMap(vec3 vertexCoord, vec3 fixedVertexCoord, vec3 normal);
+//Chameleon: added in search of FPS loss
+void PrepareForShadow(vec3 worldOrigin, vec3 normal);
+//Chameleon: commented out in search of FPS loss
+//void PrepareForShadowForMap(vec3 vertexCoord, vec3 fixedVertexCoord, vec3 normal);
+
 vec4 FogDensity(float poweredLength);
 
 void main() {
@@ -67,12 +72,18 @@ void main() {
 	float distance = dot(viewPos.xyz, viewPos.xyz);
 	fogDensity = FogDensity(distance).xyz;
 	
-	vec3 fixedPosition = chunkPosition;
-	fixedPosition += fixedPositionAttribute * 0.5;
-	fixedPosition += normalAttribute * 0.1;
+	//Chameleon: commented out in search of FPS loss
+	//vec3 fixedPosition = chunkPosition;
+	//fixedPosition += fixedPositionAttribute * 0.5;
+	//fixedPosition += normalAttribute * 0.1;
 
 	vec3 normal = normalAttribute;
 	vec3 shadowVertexPos = vertexPos.xyz;
-	PrepareForShadowForMap(shadowVertexPos, fixedPosition, normal);
+	//Chameleon: added in search of FPS loss
+	if(abs(normal.x) > .1) // avoid self shadowing
+		shadowVertexPos += normal * 0.01;
+	PrepareForShadow(shadowVertexPos, normal);
+	//Chameleon: commented out in search of FPS loss
+	//PrepareForShadowForMap(shadowVertexPos, fixedPosition, normal);
 }
 
